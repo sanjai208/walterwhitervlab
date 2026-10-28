@@ -142,9 +142,20 @@ def plot_atomic_orbital(orbital_name):
 LOGO_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "walterwhitervlab.jpg")
 
 st.set_page_config(
-    page_title="walterwhitervlab Virtual Laboratory",
+    page_title="walterwhitervlab",
     page_icon=LOGO_PATH,
     layout="wide"
+)
+
+# User-selectable appearance. The selected theme persists for the session.
+if "app_theme" not in st.session_state:
+    st.session_state.app_theme = "Light"
+app_theme = st.sidebar.radio(
+    "Appearance",
+    options=["Light", "Dark"],
+    horizontal=True,
+    key="app_theme",
+    help="Switch the application between light and dark appearance."
 )
 
 
@@ -255,6 +266,58 @@ st.markdown("""
     }
 </style>
 """, unsafe_allow_html=True)
+
+# Additional overrides for a readable dark theme. Light mode keeps the
+# original light palette above.
+if app_theme == "Dark":
+    st.markdown("""
+    <style>
+        .stApp {
+            background: radial-gradient(circle at 8% 0%, rgba(23,190,187,.08), transparent 28%),
+                        linear-gradient(180deg, #101820 0%, #17232d 100%) !important;
+            color: #edf4f7 !important;
+        }
+        .main .block-container { color: #edf4f7; }
+        .main-title, h1, h2, h3, h4, h5, h6,
+        .stMarkdown, .stMarkdown p, .stMarkdown li, .stText,
+        label, [data-testid="stCaptionContainer"],
+        [data-testid="stWidgetLabel"] p {
+            color: #edf4f7 !important;
+        }
+        .section-title { color: #edf4f7 !important; border-color: rgba(23,190,187,.4); }
+        [data-testid="stMetric"] {
+            background: #202e38 !important; color: #edf4f7 !important;
+            border-color: #354954 !important; box-shadow: none !important;
+        }
+        [data-testid="stMetric"] label,
+        [data-testid="stMetric"] [data-testid="stMetricValue"],
+        [data-testid="stMetric"] [data-testid="stMetricLabel"] {
+            color: #edf4f7 !important;
+        }
+        [data-testid="stDataFrame"], [data-testid="stTable"] {
+            background: #202e38 !important; color: #edf4f7 !important;
+            border-color: #354954 !important;
+        }
+        input, textarea, [data-baseweb="input"] input,
+        [data-baseweb="select"] > div, [data-baseweb="textarea"] textarea {
+            background-color: #202e38 !important; color: #edf4f7 !important;
+            border-color: #526671 !important;
+        }
+        [data-baseweb="popover"] *, [role="listbox"] * {
+            background-color: #202e38; color: #edf4f7;
+        }
+        .stButton > button, .stDownloadButton > button {
+            background: #20343f !important; color: #edf4f7 !important;
+            border-color: #17bebb !important;
+        }
+        .stButton > button:hover, .stDownloadButton > button:hover {
+            background: #294651 !important; color: #ffffff !important;
+        }
+        div[data-testid="stAlert"] { color: #edf4f7; }
+        hr { border-color: #354954 !important; }
+        a { color: #65d9d3 !important; }
+    </style>
+    """, unsafe_allow_html=True)
 
 
 # ============================================================
@@ -1717,7 +1780,7 @@ def generate_multi_final_report(student_name, registration_number, molecule_reco
 # SIDEBAR
 # ============================================================
 
-st.sidebar.title("🧪 Virtual Lab")
+st.sidebar.title("🧪 walterwhitervlab")
 
 page = st.sidebar.radio(
 
@@ -1771,19 +1834,23 @@ Students can learn:
 if page == "🏠 Home":
 
     # ========================================================
-    # INSTITUTIONAL HEADER / COLLEGE LOGO
+    # PROJECT LOGO AND MAIN TITLE
     # ========================================================
-    logo_path = os.path.join(os.path.dirname(__file__), "srm_logo.jpeg")
-
-    if os.path.exists(logo_path):
-        logo_col1, logo_col2, logo_col3 = st.columns([1, 4, 1])
-        with logo_col2:
-            st.image(logo_path, use_container_width=True)
+    # Show the supplied WalterWhite RV Lab banner above the page topic.
+    if os.path.exists(LOGO_PATH):
+        st.image(LOGO_PATH, use_container_width=True)
 
     st.markdown(
-        '<div class="main-title">🧪 walterwhitervlab Virtual Laboratory</div>',
+        '<div class="main-title">walterwhitervlab</div>',
         unsafe_allow_html=True
     )
+
+    # Keep the institutional logo below the project logo and title if supplied.
+    college_logo_path = os.path.join(os.path.dirname(__file__), "srm_logo.jpeg")
+    if os.path.exists(college_logo_path):
+        college_logo_cols = st.columns([2, 1, 2])
+        with college_logo_cols[1]:
+            st.image(college_logo_path, use_container_width=True)
 
     st.markdown(
         """
@@ -1799,7 +1866,7 @@ if page == "🏠 Home":
 
     st.divider()
 
-    st.markdown("## Welcome to the Virtual Laboratory")
+    st.markdown("## Welcome to walterwhitervlab")
 
     st.write("""
     This interactive virtual laboratory helps students understand
@@ -1871,14 +1938,20 @@ if page == "🏠 Home":
 
     st.divider()
 
-    st.markdown("### 👨‍🏫 Developed by")
-    st.markdown("**Dr. R. Subramanian**")
-    st.markdown("Assistant Professor  ")
-    st.markdown("Division of Chemistry, School of Sciences  ")
-    st.markdown("Faculty of Engineering and Technology  ")
-    st.markdown("SRM Institute of Science and Technology, Tiruchirappalli")
-
-    st.info("📧 **For queries, contact:** rsmani84@gmail.com")
+    st.markdown(
+        """
+        <div style="
+            text-align: center;
+            font-size: 17px;
+            font-weight: 600;
+            margin: 15px 0;
+            color: #087E8B;
+        ">
+            Developed by K. Sanjai and Sharan Karthik
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
 
 # ============================================================
@@ -2769,6 +2842,6 @@ elif page == "📄 Final Project Report":
 st.divider()
 
 st.caption(
-    "🧪 walterwhitervlab Virtual Laboratory | "
+    "🧪 walterwhitervlab | "
     "Developed using Python, Streamlit and RDKit"
 )
