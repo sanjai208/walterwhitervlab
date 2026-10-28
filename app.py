@@ -138,9 +138,12 @@ def plot_atomic_orbital(orbital_name):
 # PAGE CONFIGURATION
 # ============================================================
 
+# Use the project logo for the browser tab icon.
+LOGO_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "walterwhitervlab.jpg")
+
 st.set_page_config(
     page_title="walterwhitervlab Virtual Laboratory",
-    page_icon="🧪",
+    page_icon=LOGO_PATH,
     layout="wide"
 )
 
@@ -252,6 +255,19 @@ st.markdown("""
     }
 </style>
 """, unsafe_allow_html=True)
+
+
+# ============================================================
+# WALTERWHITERVLAB LOGO
+# ============================================================
+
+# Display the supplied banner at the top of the sidebar.
+# Keep walterwhitervlab.jpg in the same folder as this Python file.
+if os.path.exists(LOGO_PATH):
+    st.sidebar.image(LOGO_PATH, use_container_width=True)
+    st.sidebar.markdown("---")
+else:
+    st.sidebar.warning("Logo image not found. Place walterwhitervlab.jpg beside this app file.")
 
 
 # ============================================================
