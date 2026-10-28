@@ -147,175 +147,215 @@ st.set_page_config(
     layout="wide"
 )
 
-# User-selectable appearance. The selected theme persists for the session.
+# User-selectable appearance. Breaking Bad style is the default.
 if "app_theme" not in st.session_state:
-    st.session_state.app_theme = "Light"
+    st.session_state.app_theme = "Breaking Bad"
 app_theme = st.sidebar.radio(
-    "Appearance",
-    options=["Light", "Dark"],
+    "Lab Theme",
+    options=["Breaking Bad", "Dark", "Light Lab"],
     horizontal=True,
     key="app_theme",
-    help="Switch the application between light and dark appearance."
+    help="Choose the signature desert-green Breaking Bad lab look or a minimal dark theme."
 )
 
 
 # ============================================================
-# CUSTOM CSS
+# CUSTOM CSS — BREAKING BAD INSPIRED LAB THEME
 # ============================================================
 
 st.markdown("""
 <style>
     :root {
-        --lab-navy: #12304A;
-        --lab-teal: #087E8B;
-        --lab-cyan: #17BEBB;
-        --lab-pale: #EAF7F8;
-        --lab-ink: #203746;
+        --bb-black: #11130f;
+        --bb-charcoal: #20231b;
+        --bb-desert: #d8c78b;
+        --bb-sand: #f3edda;
+        --bb-green: #8fae36;
+        --bb-deep-green: #526b22;
+        --bb-teal: #3b7770;
+        --bb-ink: #25291e;
+        --bb-white: #fffdf5;
     }
 
     .stApp {
         background:
-            radial-gradient(circle at 8% 0%, rgba(23, 190, 187, 0.08), transparent 28%),
-            linear-gradient(180deg, #F7FBFC 0%, #F2F7FA 100%);
-        color: var(--lab-ink);
+            radial-gradient(ellipse at 82% 2%, rgba(143,174,54,.20), transparent 28%),
+            radial-gradient(ellipse at 5% 35%, rgba(216,199,139,.22), transparent 32%),
+            linear-gradient(145deg, #f8f4e7 0%, #e9e0c3 52%, #f4eedc 100%);
+        color: var(--bb-ink);
+    }
+
+    [data-testid="stHeader"] {
+        background: rgba(248,244,231,.88);
+    }
+
+    .main .block-container {
+        padding-top: 1.6rem;
+        padding-bottom: 2.5rem;
+        max-width: 1500px;
     }
 
     .main-title {
+        display: block;
+        width: fit-content;
+        max-width: 100%;
+        margin: .5rem auto 1rem;
+        padding: .65rem 1.25rem;
         text-align: center;
-        font-size: clamp(28px, 3vw, 42px);
-        line-height: 1.2;
-        font-weight: 800;
-        letter-spacing: -0.8px;
-        color: var(--lab-navy);
-        padding: 0.55rem 0 0.8rem;
-        margin: 0.2rem 0 0.6rem;
+        font-size: clamp(30px, 3.8vw, 52px);
+        line-height: 1.1;
+        font-weight: 900;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        color: #f9f6e9;
+        background: linear-gradient(135deg, #20251a, #394326 70%, #53682a);
+        border: 3px solid var(--bb-green);
+        border-radius: 5px;
+        box-shadow: 7px 7px 0 rgba(35,42,25,.17);
+        text-shadow: 2px 2px 0 #526b22;
     }
 
     .section-title {
+        color: #34451f;
         font-size: 25px;
-        font-weight: 750;
-        color: var(--lab-navy);
-        border-bottom: 2px solid rgba(8, 126, 139, 0.22);
-        padding-bottom: 0.4rem;
-        margin-bottom: 0.8rem;
+        font-weight: 850;
+        border-bottom: 3px solid var(--bb-green);
+        padding-bottom: .45rem;
+        margin-bottom: .9rem;
     }
 
-    h1, h2, h3 {
-        color: var(--lab-navy);
-        letter-spacing: -0.35px;
+    h1, h2, h3, h4, h5, h6 {
+        color: #34451f;
+        letter-spacing: -.25px;
+        font-weight: 800;
+    }
+
+    p, li, label, .stMarkdown, [data-testid="stCaptionContainer"] {
+        color: #2d3025;
     }
 
     [data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #102A43 0%, #173F55 100%);
+        background:
+            radial-gradient(ellipse at 100% 0%, rgba(143,174,54,.23), transparent 36%),
+            linear-gradient(180deg, #151811 0%, #252a1c 56%, #303723 100%);
+        border-right: 3px solid #8fae36;
     }
 
-    [data-testid="stSidebar"] * {
-        color: #F1FAFC;
-    }
-
-    [data-testid="stSidebar"] input {
-        color: #17324A;
-        background: #FFFFFF;
-    }
+    [data-testid="stSidebar"] * { color: #f7f2df; }
+    [data-testid="stSidebar"] hr { border-color: rgba(216,199,139,.35); }
+    [data-testid="stSidebar"] [data-testid="stRadio"] label { font-weight: 650; }
+    [data-testid="stSidebar"] input { color: #20231b; background: #fffdf5; }
 
     [data-testid="stMetric"] {
-        background: #FFFFFF;
-        border: 1px solid rgba(8, 126, 139, 0.18);
-        border-left: 4px solid var(--lab-teal);
-        border-radius: 12px;
-        padding: 0.9rem 1rem;
-        box-shadow: 0 4px 16px rgba(18, 48, 74, 0.05);
+        background: linear-gradient(145deg, #fffdf6, #eee7cf);
+        border: 1px solid #c7bd95;
+        border-left: 5px solid var(--bb-green);
+        border-radius: 8px;
+        padding: .9rem 1rem;
+        box-shadow: 0 5px 14px rgba(35,42,25,.09);
     }
+    [data-testid="stMetricLabel"], [data-testid="stMetricValue"] { color: #303b20 !important; }
 
     [data-testid="stDataFrame"], [data-testid="stTable"] {
-        border: 1px solid rgba(18, 48, 74, 0.12);
-        border-radius: 10px;
+        border: 1px solid #b7b18f;
+        border-radius: 8px;
         overflow: hidden;
     }
 
     .stButton > button, .stDownloadButton > button {
-        border-radius: 9px;
-        border: 1px solid var(--lab-teal);
-        font-weight: 650;
+        background: linear-gradient(135deg, #526b22, #718d2d);
+        color: #fffdf5;
+        border: 1px solid #34451f;
+        border-radius: 5px;
+        font-weight: 800;
+        letter-spacing: .2px;
         transition: all 160ms ease;
+        box-shadow: 0 3px 0 #303b20;
     }
-
     .stButton > button:hover, .stDownloadButton > button:hover {
-        border-color: var(--lab-cyan);
-        color: var(--lab-teal);
-        box-shadow: 0 4px 14px rgba(8, 126, 139, 0.14);
+        background: #303b20;
+        color: #f5e7a8;
+        border-color: #a9c64d;
         transform: translateY(-1px);
+        box-shadow: 0 5px 0 #20251a;
     }
 
-    div[data-testid="stAlert"] {
-        border-radius: 10px;
+    [data-baseweb="input"] > div, [data-baseweb="textarea"] > div,
+    [data-baseweb="select"] > div {
+        background: #fffdf5;
+        border-color: #b7b18f;
+        border-radius: 5px;
     }
+    input, textarea { color: #25291e !important; }
+    [data-testid="stAlert"] { border-radius: 6px; }
+    [data-testid="stExpander"] {
+        border: 1px solid #c7bd95;
+        border-radius: 7px;
+        background: rgba(255,253,245,.65);
+    }
+    hr { border-color: rgba(82,107,34,.35); }
+    a { color: #3b7770 !important; font-weight: 700; }
 
-    hr {
-        border-color: rgba(8, 126, 139, 0.18);
+    /* Chemistry-lab / periodic-table accents */
+    code, pre {
+        background: #25291e !important;
+        color: #d6e69a !important;
+        border: 1px solid #526b22 !important;
+        border-radius: 4px !important;
+    }
+    [data-testid="stPlotlyChart"], [data-testid="stPyplotChart"] {
+        border: 1px solid rgba(82,107,34,.25);
+        border-radius: 8px;
+        padding: .25rem;
     }
 
     @media (max-width: 700px) {
-        .main-title {
-            font-size: 28px;
-            letter-spacing: -0.3px;
-        }
-        .section-title {
-            font-size: 21px;
-        }
+        .main-title { font-size: 28px; letter-spacing: .5px; padding: .55rem .7rem; }
+        .section-title { font-size: 21px; }
     }
 </style>
 """, unsafe_allow_html=True)
 
-# Additional overrides for a readable dark theme. Light mode keeps the
-# original light palette above.
+# Optional minimal dark variant. The default is the Breaking Bad inspired theme.
 if app_theme == "Dark":
     st.markdown("""
     <style>
-        .stApp {
-            background: radial-gradient(circle at 8% 0%, rgba(23,190,187,.08), transparent 28%),
-                        linear-gradient(180deg, #101820 0%, #17232d 100%) !important;
-            color: #edf4f7 !important;
-        }
-        .main .block-container { color: #edf4f7; }
-        .main-title, h1, h2, h3, h4, h5, h6,
-        .stMarkdown, .stMarkdown p, .stMarkdown li, .stText,
-        label, [data-testid="stCaptionContainer"],
-        [data-testid="stWidgetLabel"] p {
-            color: #edf4f7 !important;
-        }
-        .section-title { color: #edf4f7 !important; border-color: rgba(23,190,187,.4); }
-        [data-testid="stMetric"] {
-            background: #202e38 !important; color: #edf4f7 !important;
-            border-color: #354954 !important; box-shadow: none !important;
-        }
-        [data-testid="stMetric"] label,
-        [data-testid="stMetric"] [data-testid="stMetricValue"],
-        [data-testid="stMetric"] [data-testid="stMetricLabel"] {
-            color: #edf4f7 !important;
-        }
-        [data-testid="stDataFrame"], [data-testid="stTable"] {
-            background: #202e38 !important; color: #edf4f7 !important;
-            border-color: #354954 !important;
-        }
-        input, textarea, [data-baseweb="input"] input,
-        [data-baseweb="select"] > div, [data-baseweb="textarea"] textarea {
-            background-color: #202e38 !important; color: #edf4f7 !important;
-            border-color: #526671 !important;
-        }
-        [data-baseweb="popover"] *, [role="listbox"] * {
-            background-color: #202e38; color: #edf4f7;
-        }
-        .stButton > button, .stDownloadButton > button {
-            background: #20343f !important; color: #edf4f7 !important;
-            border-color: #17bebb !important;
-        }
-        .stButton > button:hover, .stDownloadButton > button:hover {
-            background: #294651 !important; color: #ffffff !important;
-        }
-        div[data-testid="stAlert"] { color: #edf4f7; }
-        hr { border-color: #354954 !important; }
-        a { color: #65d9d3 !important; }
+        .stApp { background: linear-gradient(145deg, #10130f, #20271b 60%, #171b14) !important; color: #f4f0df !important; }
+        [data-testid="stHeader"] { background: rgba(16,19,15,.92) !important; }
+        .main-title { background: linear-gradient(135deg,#080a08,#27351c) !important; color:#f4f0df !important; }
+        h1,h2,h3,h4,h5,h6,.stMarkdown,.stMarkdown p,.stMarkdown li,.stText,label,
+        [data-testid="stCaptionContainer"],[data-testid="stWidgetLabel"] p { color:#f4f0df !important; }
+        [data-testid="stMetric"] { background:#242b20 !important; border-color:#526b22 !important; }
+        [data-testid="stMetricLabel"],[data-testid="stMetricValue"] { color:#f4f0df !important; }
+        [data-testid="stDataFrame"],[data-testid="stTable"],[data-testid="stExpander"] { background:#20271b !important; color:#f4f0df !important; border-color:#526b22 !important; }
+        [data-baseweb="input"] > div,[data-baseweb="textarea"] > div,[data-baseweb="select"] > div,
+        input,textarea { background:#252c21 !important; color:#f4f0df !important; border-color:#526b22 !important; }
+        [data-baseweb="popover"] *,[role="listbox"] * { background:#20271b; color:#f4f0df; }
+        .stButton > button,.stDownloadButton > button { background:#526b22 !important; color:#fffdf5 !important; }
+        hr { border-color:#526b22 !important; }
+        a { color:#c6df78 !important; }
+    </style>
+    """, unsafe_allow_html=True)
+
+elif app_theme == "Light Lab":
+    st.markdown("""
+    <style>
+        .stApp { background: #f4f7f2 !important; color: #202820 !important; }
+        [data-testid="stHeader"] { background: rgba(244,247,242,.95) !important; }
+        [data-testid="stSidebar"] { background: #e5ecdf !important; border-right: 2px solid #65851e !important; }
+        [data-testid="stSidebar"] * { color: #202820 !important; }
+        h1,h2,h3,h4,h5,h6,.stMarkdown,.stMarkdown p,.stMarkdown li,.stText,label,
+        [data-testid="stCaptionContainer"],[data-testid="stWidgetLabel"] p { color: #202820 !important; }
+        .main-title { background: linear-gradient(135deg,#263322,#65851e) !important; color:#ffffff !important; border-color:#65851e !important; }
+        [data-testid="stMetric"] { background:#ffffff !important; border-color:#cbd7c2 !important; }
+        [data-testid="stMetricLabel"],[data-testid="stMetricValue"] { color:#263322 !important; }
+        [data-testid="stDataFrame"],[data-testid="stTable"],[data-testid="stExpander"] { background:#ffffff !important; color:#202820 !important; border-color:#cbd7c2 !important; }
+        [data-baseweb="input"] > div,[data-baseweb="textarea"] > div,[data-baseweb="select"] > div,
+        input,textarea { background:#ffffff !important; color:#202820 !important; border-color:#cbd7c2 !important; }
+        [data-baseweb="popover"] *,[role="listbox"] * { background:#ffffff; color:#202820; }
+        .stButton > button,.stDownloadButton > button { background:#65851e !important; color:#ffffff !important; border-color:#526b22 !important; }
+        hr { border-color:#cbd7c2 !important; }
+        a { color:#42661b !important; }
     </style>
     """, unsafe_allow_html=True)
 
