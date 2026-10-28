@@ -152,10 +152,10 @@ if "app_theme" not in st.session_state:
     st.session_state.app_theme = "Breaking Bad"
 app_theme = st.sidebar.radio(
     "Lab Theme",
-    options=["Breaking Bad", "Dark", "Light Lab"],
+    options=["Breaking Bad", "Dark Lab", "Light Lab"],
     horizontal=True,
     key="app_theme",
-    help="Choose the signature desert-green Breaking Bad lab look or a minimal dark theme."
+    help="Choose the cinematic desert-and-chemistry look, Dark Lab, or Light Lab."
 )
 
 
@@ -178,15 +178,26 @@ st.markdown("""
     }
 
     .stApp {
-        background:
-            radial-gradient(ellipse at 82% 2%, rgba(143,174,54,.20), transparent 28%),
-            radial-gradient(ellipse at 5% 35%, rgba(216,199,139,.22), transparent 32%),
-            linear-gradient(145deg, #f8f4e7 0%, #e9e0c3 52%, #f4eedc 100%);
-        color: var(--bb-ink);
+        /* Cinematic desert backdrop; gradients keep content readable.
+           If the image cannot load, the gradient fallback remains visible. */
+        background-color: #d8c78b;
+        background-image:
+            linear-gradient(115deg, rgba(17,19,15,.74), rgba(32,35,27,.54) 48%, rgba(82,107,34,.48)),
+            url("https://images.unsplash.com/photo-1509316785289-025f5b846b35?auto=format&fit=crop&w=2400&q=85");
+        background-position: center center;
+        background-size: cover;
+        background-attachment: fixed;
+        color: #fffdf5;
+    }
+
+    /* A translucent content surface over the cinematic background. */
+    [data-testid="stAppViewContainer"] > .main {
+        background: linear-gradient(180deg, rgba(17,19,15,.14), rgba(17,19,15,.32));
     }
 
     [data-testid="stHeader"] {
-        background: rgba(248,244,231,.88);
+        background: rgba(17,19,15,.72);
+        backdrop-filter: blur(8px);
     }
 
     .main .block-container {
@@ -216,7 +227,7 @@ st.markdown("""
     }
 
     .section-title {
-        color: #34451f;
+        color: #f5edcf;
         font-size: 25px;
         font-weight: 850;
         border-bottom: 3px solid var(--bb-green);
@@ -225,13 +236,25 @@ st.markdown("""
     }
 
     h1, h2, h3, h4, h5, h6 {
-        color: #34451f;
+        color: #f5edcf;
         letter-spacing: -.25px;
         font-weight: 800;
+        text-shadow: 0 2px 8px rgba(0,0,0,.42);
     }
 
     p, li, label, .stMarkdown, [data-testid="stCaptionContainer"] {
-        color: #2d3025;
+        color: #fffdf5;
+    }
+
+    /* Translucent panels let the desert background show through. */
+    [data-testid="stVerticalBlockBorderWrapper"],
+    [data-testid="stContainer"] {
+        border-color: rgba(216,199,139,.34);
+    }
+
+    .stMarkdown, [data-testid="stDataFrame"], [data-testid="stTable"],
+    [data-testid="stExpander"] {
+        backdrop-filter: blur(2px);
     }
 
     [data-testid="stSidebar"] {
@@ -247,17 +270,18 @@ st.markdown("""
     [data-testid="stSidebar"] input { color: #20231b; background: #fffdf5; }
 
     [data-testid="stMetric"] {
-        background: linear-gradient(145deg, #fffdf6, #eee7cf);
-        border: 1px solid #c7bd95;
+        background: linear-gradient(145deg, rgba(25,30,20,.94), rgba(48,58,32,.92));
+        border: 1px solid #8fae36;
         border-left: 5px solid var(--bb-green);
         border-radius: 8px;
         padding: .9rem 1rem;
-        box-shadow: 0 5px 14px rgba(35,42,25,.09);
+        box-shadow: 0 5px 18px rgba(0,0,0,.22);
     }
-    [data-testid="stMetricLabel"], [data-testid="stMetricValue"] { color: #303b20 !important; }
+    [data-testid="stMetricLabel"], [data-testid="stMetricValue"] { color: #f5edcf !important; }
 
     [data-testid="stDataFrame"], [data-testid="stTable"] {
-        border: 1px solid #b7b18f;
+        background: rgba(20,24,17,.94);
+        border: 1px solid #8fae36;
         border-radius: 8px;
         overflow: hidden;
     }
@@ -282,17 +306,18 @@ st.markdown("""
 
     [data-baseweb="input"] > div, [data-baseweb="textarea"] > div,
     [data-baseweb="select"] > div {
-        background: #fffdf5;
-        border-color: #b7b18f;
+        background: rgba(24,29,20,.96);
+        border-color: #8fae36;
         border-radius: 5px;
     }
-    input, textarea { color: #25291e !important; }
+    input, textarea { color: #fffdf5 !important; }
     [data-testid="stAlert"] { border-radius: 6px; }
     [data-testid="stExpander"] {
-        border: 1px solid #c7bd95;
+        border: 1px solid #8fae36;
         border-radius: 7px;
-        background: rgba(255,253,245,.65);
+        background: rgba(25,30,20,.88);
     }
+    [data-testid="stExpander"] summary, [data-testid="stExpander"] p { color: #fffdf5 !important; }
     hr { border-color: rgba(82,107,34,.35); }
     a { color: #3b7770 !important; font-weight: 700; }
 
@@ -316,11 +341,17 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Optional minimal dark variant. The default is the Breaking Bad inspired theme.
-if app_theme == "Dark":
+# Optional Dark Lab variant. The default is the cinematic Breaking Bad-inspired theme.
+if app_theme == "Dark Lab":
     st.markdown("""
     <style>
-        .stApp { background: linear-gradient(145deg, #10130f, #20271b 60%, #171b14) !important; color: #f4f0df !important; }
+        .stApp {
+            background-color: #10130f !important;
+            background-image:
+                radial-gradient(ellipse at 80% 0%, rgba(143,174,54,.12), transparent 32%),
+                linear-gradient(145deg, #10130f, #20271b 60%, #171b14) !important;
+            color: #f4f0df !important;
+        }
         [data-testid="stHeader"] { background: rgba(16,19,15,.92) !important; }
         .main-title { background: linear-gradient(135deg,#080a08,#27351c) !important; color:#f4f0df !important; }
         h1,h2,h3,h4,h5,h6,.stMarkdown,.stMarkdown p,.stMarkdown li,.stText,label,
@@ -340,7 +371,11 @@ if app_theme == "Dark":
 elif app_theme == "Light Lab":
     st.markdown("""
     <style>
-        .stApp { background: #f4f7f2 !important; color: #202820 !important; }
+        .stApp {
+            background-color: #f4f7f2 !important;
+            background-image: linear-gradient(145deg, #f4f7f2, #e4eadb 60%, #f8f8f2) !important;
+            color: #202820 !important;
+        }
         [data-testid="stHeader"] { background: rgba(244,247,242,.95) !important; }
         [data-testid="stSidebar"] { background: #e5ecdf !important; border-right: 2px solid #65851e !important; }
         [data-testid="stSidebar"] * { color: #202820 !important; }
