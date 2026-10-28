@@ -41,6 +41,100 @@ import os
 
 
 # ============================================================
+# ADD-ON: PARTIAL CHARGE AND ATOMIC ORBITAL VISUALIZATION
+# ============================================================
+
+def calculate_gasteiger_charges(mol):
+    """Return Gasteiger partial charges for heavy atoms in an RDKit molecule."""
+    charge_mol = Chem.AddHs(Chem.Mol(mol))
+    AllChem.ComputeGasteigerCharges(charge_mol)
+    charges = []
+    for atom in charge_mol.GetAtoms():
+        if atom.GetSymbol() != "H":
+            raw_charge = atom.GetProp("_GasteigerCharge")
+            charges.append(float(raw_charge))
+    return charges
+
+
+def draw_partial_charge_structure(mol, charges):
+    """Draw a 2D structure with atom labels and colors representing partial charge."""
+    from rdkit.Chem.Draw import rdMolDraw2D
+
+    draw_mol = Chem.Mol(mol)
+    drawer = rdMolDraw2D.MolDraw2DCairo(1000, 620)
+    options = drawer.drawOptions()
+    options.addAtomIndices = False
+
+    highlight_atoms = []
+    highlight_colors = {}
+    highlight_radii = {}
+
+    for idx, atom in enumerate(draw_mol.GetAtoms()):
+        charge = charges[idx]
+        options.atomLabels[idx] = f"{atom.GetSymbol()}\n{charge:+.2f}"
+        highlight_atoms.append(idx)
+        # Red = negative partial charge; blue = positive; grey = near-neutral.
+        if charge < -0.05:
+            highlight_colors[idx] = (0.95, 0.48, 0.43)
+        elif charge > 0.05:
+            highlight_colors[idx] = (0.38, 0.65, 0.95)
+        else:
+            highlight_colors[idx] = (0.72, 0.76, 0.79)
+        highlight_radii[idx] = 0.42
+
+    drawer.DrawMolecule(
+        draw_mol,
+        highlightAtoms=highlight_atoms,
+        highlightAtomColors=highlight_colors,
+        highlightAtomRadii=highlight_radii
+    )
+    drawer.FinishDrawing()
+    from PIL import Image
+    import io
+    return Image.open(io.BytesIO(drawer.GetDrawingText()))
+
+
+def plot_atomic_orbital(orbital_name):
+    """Create a pedagogical atomic-orbital shape schematic, not a QM calculation."""
+    grid = np.linspace(-2.8, 2.8, 41)
+    x, y, z = np.meshgrid(grid, grid, grid, indexing="ij")
+    r = np.sqrt(x*x + y*y + z*z)
+    radial = np.exp(-r / 1.25)
+
+    orbital_functions = {
+        "1s": radial,
+        "2px": x * radial,
+        "2py": y * radial,
+        "2pz": z * radial,
+        "3dxy": x * y * radial,
+        "3dx²−y²": (x*x - y*y) * radial,
+        "3dz²": (2*z*z - x*x - y*y) * radial,
+    }
+    psi = orbital_functions[orbital_name]
+    max_abs = float(np.max(np.abs(psi)))
+    mask = np.abs(psi) >= max_abs * 0.34
+    # Downsample the displayed point cloud so the plot stays responsive.
+    mask[1::2, :, :] = False
+    mask[:, 1::2, :] = False
+    mask[:, :, 1::2] = False
+
+    fig = plt.figure(figsize=(7, 6))
+    ax = fig.add_subplot(111, projection="3d")
+    positive = mask & (psi >= 0)
+    negative = mask & (psi < 0)
+    ax.scatter(x[positive], y[positive], z[positive], s=7, c="#168AAD", alpha=0.65, label="Positive phase")
+    ax.scatter(x[negative], y[negative], z[negative], s=7, c="#F28E2B", alpha=0.65, label="Negative phase")
+    ax.set_xlabel("x")
+    ax.set_ylabel("y")
+    ax.set_zlabel("z")
+    ax.set_title(f"{orbital_name} atomic orbital (schematic)")
+    ax.set_box_aspect((1, 1, 1))
+    ax.legend(loc="upper right", fontsize=8)
+    fig.tight_layout()
+    return fig
+
+
+# ============================================================
 # PAGE CONFIGURATION
 # ============================================================
 
@@ -1621,6 +1715,8 @@ page = st.sidebar.radio(
 
         "🧬 Molecular Visualization",
 
+        "⚛️ Molecular Charge & Orbital Visualization",
+
         "📊 Molecular Properties Report",
 
         "📈 Structure–Property Analysis",
@@ -2008,6 +2104,70 @@ elif page == "🧬 Molecular Visualization":
 # ============================================================
 # COMPLETE MOLECULAR PROPERTIES REPORT
 # ============================================================
+
+elif page == "⚛️ Molecular Charge & Orbital Visualization":
+
+    st.title("⚛️ Molecular Charge & Orbital Visualization")
+    st.write(
+        "Explore estimated atom-wise partial charges and educational atomic-orbital shapes. "
+        "This add-on page does not change the existing molecular-analysis workflows."
+    )
+
+    default_charge_smiles = st.session_state.get(
+        "latest_smiles", st.session_state.get("active_smiles", "CCO")
+    )
+    charge_smiles = st.text_input(
+        "Enter SMILES for charge analysis",
+        value=default_charge_smiles,
+        key="charge_orbital_smiles"
+    )
+    charge_mol = get_molecule(charge_smiles)
+
+    if charge_mol is None:
+        st.error("Please enter a valid SMILES string to view partial charges.")
+    else:
+        st.subheader("1. Atom-wise Partial Charge Map")
+        try:
+            partial_charges = calculate_gasteiger_charges(charge_mol)
+            charge_image = draw_partial_charge_structure(charge_mol, partial_charges)
+            st.image(charge_image, use_container_width=True)
+
+            charge_rows = []
+            for atom, partial_charge in zip(charge_mol.GetAtoms(), partial_charges):
+                charge_rows.append({
+                    "Atom index": atom.GetIdx(),
+                    "Element": atom.GetSymbol(),
+                    "Formal charge": atom.GetFormalCharge(),
+                    "Gasteiger partial charge": round(partial_charge, 4)
+                })
+            st.dataframe(pd.DataFrame(charge_rows), use_container_width=True, hide_index=True)
+            st.caption(
+                "Color key: red = more negative partial charge; blue = more positive; grey = near-neutral. "
+                "Gasteiger charges are model-based estimates, not measured electron densities."
+            )
+        except Exception as exc:
+            st.warning(f"Partial charges could not be calculated for this structure: {exc}")
+
+    st.divider()
+    st.subheader("2. Atomic Orbital Shape Explorer")
+    st.info(
+        "These are educational atomic-orbital shape schematics showing orbital phases. "
+        "They are not calculated molecular orbitals for the entered molecule. "
+        "True molecular orbitals require a quantum-chemistry calculation and its output files."
+    )
+    orbital_name = st.selectbox(
+        "Choose an orbital",
+        ["1s", "2px", "2py", "2pz", "3dxy", "3dx²−y²", "3dz²"],
+        key="atomic_orbital_choice"
+    )
+    orbital_fig = plot_atomic_orbital(orbital_name)
+    st.pyplot(orbital_fig, use_container_width=True)
+    plt.close(orbital_fig)
+    st.caption(
+        "The two colors indicate opposite mathematical phases of the orbital wavefunction, "
+        "not positive and negative electrical charge. The plot is a simplified schematic."
+    )
+
 
 elif page == "📊 Molecular Properties Report":
 
