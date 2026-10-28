@@ -152,10 +152,10 @@ if "app_theme" not in st.session_state:
     st.session_state.app_theme = "Breaking Bad"
 app_theme = st.sidebar.radio(
     "Lab Theme",
-    options=["Breaking Bad", "Dark Lab", "Light Lab"],
+    options=["Breaking Bad", "Barca Theme", "Madrid Theme"],
     horizontal=True,
     key="app_theme",
-    help="Choose the cinematic desert-and-chemistry look, Dark Lab, or Light Lab."
+    help="Choose the Breaking Bad desert lab, Barcelona-inspired football theme, or Madrid-inspired light theme."
 )
 
 
@@ -341,56 +341,70 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Optional Dark Lab variant. The default is the cinematic Breaking Bad-inspired theme.
-if app_theme == "Dark Lab":
+# Barcelona-inspired dark football theme. Breaking Bad remains the default.
+if app_theme == "Barca Theme":
     st.markdown("""
     <style>
         .stApp {
-            background-color: #10130f !important;
+            background-color: #07152f !important;
             background-image:
-                radial-gradient(ellipse at 80% 0%, rgba(143,174,54,.12), transparent 32%),
-                linear-gradient(145deg, #10130f, #20271b 60%, #171b14) !important;
-            color: #f4f0df !important;
+                linear-gradient(120deg, rgba(4,15,45,.88), rgba(25,28,80,.68) 48%, rgba(142,20,52,.72)),
+                /* Messi in FC Barcelona colours; Wikimedia Commons, CC BY-SA 4.0 */
+                url("https://upload.wikimedia.org/wikipedia/commons/f/f8/Lionel_Messi_in_a_La_Liga_match_at_Camp_Nou%2C_Barcelona_%28_Ank_Kumar%2C_Infosys_Limited%29_05.jpg") !important;
+            background-position: center center !important;
+            background-size: cover !important;
+            background-attachment: fixed !important;
+            color: #f7f5ff !important;
         }
-        [data-testid="stHeader"] { background: rgba(16,19,15,.92) !important; }
-        .main-title { background: linear-gradient(135deg,#080a08,#27351c) !important; color:#f4f0df !important; }
+        [data-testid="stAppViewContainer"] > .main { background: linear-gradient(180deg,rgba(5,14,42,.24),rgba(5,14,42,.58)) !important; }
+        [data-testid="stHeader"] { background: rgba(5,15,42,.86) !important; }
+        [data-testid="stSidebar"] { background: linear-gradient(180deg,#07152f,#172b66 55%,#6f1538) !important; border-right: 3px solid #a51d43 !important; }
+        [data-testid="stSidebar"] * { color:#f7f5ff !important; }
+        .main-title { background: linear-gradient(120deg,#07152f,#183b82 58%,#a51d43) !important; color:#ffffff !important; border-color:#d22b50 !important; text-shadow:2px 2px 0 #07152f !important; }
         h1,h2,h3,h4,h5,h6,.stMarkdown,.stMarkdown p,.stMarkdown li,.stText,label,
-        [data-testid="stCaptionContainer"],[data-testid="stWidgetLabel"] p { color:#f4f0df !important; }
-        [data-testid="stMetric"] { background:#242b20 !important; border-color:#526b22 !important; }
-        [data-testid="stMetricLabel"],[data-testid="stMetricValue"] { color:#f4f0df !important; }
-        [data-testid="stDataFrame"],[data-testid="stTable"],[data-testid="stExpander"] { background:#20271b !important; color:#f4f0df !important; border-color:#526b22 !important; }
+        [data-testid="stCaptionContainer"],[data-testid="stWidgetLabel"] p { color:#f7f5ff !important; }
+        [data-testid="stMetric"] { background:linear-gradient(135deg,rgba(8,25,62,.95),rgba(92,20,55,.92)) !important; border-color:#d22b50 !important; border-left-color:#d22b50 !important; }
+        [data-testid="stMetricLabel"],[data-testid="stMetricValue"] { color:#ffffff !important; }
+        [data-testid="stDataFrame"],[data-testid="stTable"],[data-testid="stExpander"] { background:rgba(8,20,48,.94) !important; color:#f7f5ff !important; border-color:#3158a5 !important; }
         [data-baseweb="input"] > div,[data-baseweb="textarea"] > div,[data-baseweb="select"] > div,
-        input,textarea { background:#252c21 !important; color:#f4f0df !important; border-color:#526b22 !important; }
-        [data-baseweb="popover"] *,[role="listbox"] * { background:#20271b; color:#f4f0df; }
-        .stButton > button,.stDownloadButton > button { background:#526b22 !important; color:#fffdf5 !important; }
-        hr { border-color:#526b22 !important; }
-        a { color:#c6df78 !important; }
+        input,textarea { background:rgba(8,20,48,.96) !important; color:#ffffff !important; border-color:#3158a5 !important; }
+        [data-baseweb="popover"] *,[role="listbox"] * { background:#102451; color:#ffffff; }
+        .stButton > button,.stDownloadButton > button { background:linear-gradient(120deg,#183b82,#a51d43) !important; color:#ffffff !important; border-color:#d22b50 !important; }
+        hr { border-color:#a51d43 !important; }
+        a { color:#ff8ba4 !important; }
     </style>
     """, unsafe_allow_html=True)
 
-elif app_theme == "Light Lab":
+elif app_theme == "Madrid Theme":
     st.markdown("""
     <style>
         .stApp {
-            background-color: #f4f7f2 !important;
-            background-image: linear-gradient(145deg, #f4f7f2, #e4eadb 60%, #f8f8f2) !important;
-            color: #202820 !important;
+            background-color: #f8f8f5 !important;
+            background-image:
+                linear-gradient(120deg, rgba(255,255,255,.92), rgba(247,247,242,.82) 58%, rgba(224,211,170,.70)),
+                /* Cristiano Ronaldo with Real Madrid; image hosted by The Independent */
+                url("https://static.independent.co.uk/s3fs-public/thumbnails/image/2014/08/14/10/Ronaldo-1.jpg") !important;
+            background-position: center center !important;
+            background-size: cover !important;
+            background-attachment: fixed !important;
+            color: #18264a !important;
         }
-        [data-testid="stHeader"] { background: rgba(244,247,242,.95) !important; }
-        [data-testid="stSidebar"] { background: #e5ecdf !important; border-right: 2px solid #65851e !important; }
-        [data-testid="stSidebar"] * { color: #202820 !important; }
+        [data-testid="stAppViewContainer"] > .main { background:rgba(255,255,255,.48) !important; }
+        [data-testid="stHeader"] { background:rgba(255,255,255,.92) !important; }
+        [data-testid="stSidebar"] { background:linear-gradient(180deg,#ffffff,#f0eee4 72%,#d9cba1) !important; border-right:3px solid #c6a64b !important; }
+        [data-testid="stSidebar"] * { color:#18264a !important; }
         h1,h2,h3,h4,h5,h6,.stMarkdown,.stMarkdown p,.stMarkdown li,.stText,label,
-        [data-testid="stCaptionContainer"],[data-testid="stWidgetLabel"] p { color: #202820 !important; }
-        .main-title { background: linear-gradient(135deg,#263322,#65851e) !important; color:#ffffff !important; border-color:#65851e !important; }
-        [data-testid="stMetric"] { background:#ffffff !important; border-color:#cbd7c2 !important; }
-        [data-testid="stMetricLabel"],[data-testid="stMetricValue"] { color:#263322 !important; }
-        [data-testid="stDataFrame"],[data-testid="stTable"],[data-testid="stExpander"] { background:#ffffff !important; color:#202820 !important; border-color:#cbd7c2 !important; }
+        [data-testid="stCaptionContainer"],[data-testid="stWidgetLabel"] p { color:#18264a !important; text-shadow:none !important; }
+        .main-title { background:linear-gradient(120deg,#ffffff,#f0eee4 62%,#d9cba1) !important; color:#18264a !important; border-color:#c6a64b !important; text-shadow:none !important; }
+        [data-testid="stMetric"] { background:rgba(255,255,255,.95) !important; border-color:#c6a64b !important; border-left-color:#c6a64b !important; }
+        [data-testid="stMetricLabel"],[data-testid="stMetricValue"] { color:#18264a !important; }
+        [data-testid="stDataFrame"],[data-testid="stTable"],[data-testid="stExpander"] { background:rgba(255,255,255,.96) !important; color:#18264a !important; border-color:#d8cfb4 !important; }
         [data-baseweb="input"] > div,[data-baseweb="textarea"] > div,[data-baseweb="select"] > div,
-        input,textarea { background:#ffffff !important; color:#202820 !important; border-color:#cbd7c2 !important; }
-        [data-baseweb="popover"] *,[role="listbox"] * { background:#ffffff; color:#202820; }
-        .stButton > button,.stDownloadButton > button { background:#65851e !important; color:#ffffff !important; border-color:#526b22 !important; }
-        hr { border-color:#cbd7c2 !important; }
-        a { color:#42661b !important; }
+        input,textarea { background:#ffffff !important; color:#18264a !important; border-color:#d8cfb4 !important; }
+        [data-baseweb="popover"] *,[role="listbox"] * { background:#ffffff; color:#18264a; }
+        .stButton > button,.stDownloadButton > button { background:linear-gradient(120deg,#18264a,#c6a64b) !important; color:#ffffff !important; border-color:#c6a64b !important; }
+        hr { border-color:#c6a64b !important; }
+        a { color:#8b6b14 !important; }
     </style>
     """, unsafe_allow_html=True)
 
